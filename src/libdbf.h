@@ -1,5 +1,5 @@
 /******************************************************************************
- * libdbf.h
+ * liblibdbf.h
  ******************************************************************************
  * Library to read information from dBASE files
  * Author: Bjoern Berg, clergyman@gmx.de
@@ -15,17 +15,18 @@
  *
  * History:
  * $Log$
- * Revision 1.1  2004-05-18 15:29:02  rollinhand
- * official include to libdbf
+ * Revision 1.2  2004-05-27 21:16:56  rollinhand
+ * deleted dbf_Connect, makes no sense
  *
- *
+ * Revision 1.1  2004/05/18 15:29:02  rollinhand
+ * official include to libdbf 
  ***********************************************************************************/
 
-/*! \file libdbf.h
+/*! \file liblibdbf.h
 	\brief provides access to libdbf.
 
 	If you want to use functions of libdbf in your own programme, you have to add
-	dbf.h to your source files. dbf.h describes all necessary accessible functions
+	libdbf.h to your source files. libdbf.h describes all necessary accessible functions
 	that libdbf provides.
 */
 /*!	\mainpage libdbf Documentation
@@ -77,6 +78,8 @@ typedef struct {
 	u_int32_t calc_filesize;
 	/*! integrity could be: valid, invalid */
 	unsigned char integrity[7];
+	/*! errorhandler, maximum of 254 characters */
+	char errmsg[254];
 } P_DBF;
 
 /*
@@ -88,27 +91,14 @@ typedef struct {
 */
 static void dbf_GetLibVersion();
 
-/*! \fn int dbf_Connect (const char *file, P_DBF *p_dbf)
-	\brief dbf_Connect opens a dBASE \a file and stores the filehandler in \a P_DBF
+/*! \fn int dbf_Open (const char *file, P_DBF *p_dbf)
+	\brief dbf_Open opens a dBASE \a file and stores the filehandler in \a P_DBF
 	\param file the filename of the dBASE file
-	\param *p_dbf the filehandler of the opened file is stored in it
-	\warning function does not return the filehandler
+	\param *p_dbf the filehandler of the opened file is stored in it	
 
 	dbf_Connect opens a dBASE file and stores the filehandler in the global P_DBF.
 	Additionally information about the dBASE header are read in.
 	\return 0 if connection was successful and -1 if not.
-*/
-int dbf_Connect (const char *file, P_DBF *p_dbf);
-
-/*! \fn int dbf_Open (const char *file, P_DBF *p_dbf)
-	\brief dbf_Open opens a dBASE \a file and stores the filehandler in \a P_DBF
-	\param file the filename of the dBASE file
-	\param *p_dbf the filehandler of the opened file is stored in it
-	\warning dbf_Open is a meta function. If you want to work with the opened dBASE
-	file, use dbf_Connect()
-
-	dbf_Connect opens a dBASE file and stores the filehandler in the global P_DBF.
-	It returns 0 if connection was successful and -1 if not.
 */
 int dbf_Open (const char *file, P_DBF *p_dbf);
 
