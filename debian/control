@@ -1,4 +1,5 @@
 Source: libdbf
+Section: misc
 Priority: optional
 Maintainer: Uwe Steinmann <steinm@debian.org>
 Build-Depends: debhelper (>= 4.0.0)
