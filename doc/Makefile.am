@@ -14,8 +14,7 @@ distclean: clean
 clean:
 	rm -f ${man_MANS}
 
-SGML_FILES = \
-	dbf_Open.sgml
+SGML_FILES = 
 
 EXTRA_DIST = ${SGML_FILES} libdbf.sgml
 
