@@ -1,0 +1,222 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/transitional.dtd">
+<html>
+<head>
+<title>anubisnet Documentation: libdbf</title>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<meta name="author" content="Bjoern Berg, clergyman@gmx.de">
+<meta name="description" content="anubisnet is a free group of developers and contributors, who develop portable
+software for Linux, Windows and MacOS and most other operating systems. Our goal is to keep the source code as
+platform and operating system independent as possible.">
+<meta name="keywords" content="Freeware,download,Linux,Windows,Mac,RISC,CISC,Intel,dbase,visual
+dbase,dbf,dbase III,dbase 3,Borland Database Engine,dbase konvertierung,dbase.com,dBASE Plus,dBASE
+SE,dQuery,Rapid Application Development,dB2K,Oracle,Microsoft SQL Server,IBM DB2,anubisnet">
+<link rel="shortcut icon" href="themes/standard/pics/favicon.ico">
+
+<!-- new style definition -->
+<link rel="stylesheet" type="text/css" href="doxygen.css">
+<link rel="stylesheet" type="text/css" href="standard.css">
+<style type="text/css">@import url(doxygen.css);</style>
+<style type="text/css">@import url(standard.css);</style>
+
+<script language="javascript" type="text/javascript">
+  	function SetColour(td) {
+		if (document.all) {
+			document.all[td].style.backgroundColor="#EEEEEE";
+			document.all[td].style.borderColor="#777777";
+			document.all[td].style.borderBottomStyle="solid";
+		} else if (document.getElementById) {
+			document.getElementById(td).style.backgroundColor="#EEEEEE";
+			document.getElementById(td).style.borderColor="#777777";
+			document.getElementById(td).style.borderBottomStyle="solid";
+		}
+	}
+
+	function RemoveColour(td) {
+		if (document.all) {
+			document.all[td].style.backgroundColor="#FFFFFF";
+			document.all[td].style.borderColor="#BBBBBB";
+			document.all[td].style.borderBottomStyle="dotted";
+		} else if (document.getElementById) {
+			document.getElementById(td).style.backgroundColor="#FFFFFF";
+			document.getElementById(td).style.borderColor="#BBBBBB";
+			document.getElementById(td).style.borderBottomStyle="dotted";
+		}
+	}
+</script>
+<!--<base href="http://www.anubisnet.de/">-->
+</head>
+
+<body>
+
+<!-- Small Header -->
+<div class="main">
+<table class="header" cellspacing="0" cellpadding="0" border="0">
+<tr>
+	<td width="1" rowspan="2" valign="top">
+  		<img src="pics/ss_bw.png" width="1" height="80" alt="" border="">
+	</td>
+  	<td class="header_logo" valign="middle" width="100">
+		<img src="pics/logo2.png" width="100" height="70" alt="" border="">
+	</td>
+  	<td class="header_logo" valign="middle">
+		<img src="pics/anubisnet.png" width="150" height="70" alt="" border="">
+	</td>
+  	<td width="1" rowspan="2" valign="top">
+		<img src="pics/ss_bw.png" width="1" height="80" alt="" border="">
+	</td>
+</tr>
+<tr>
+  	<td class="header_navi" colspan="2">
+  		Send us your
+		<a class="footer" href="mailto:info@anubisnet.de">feedback</a>.
+	</td>
+</tr>
+</table>
+</div>
+<div class="main">
+<!-- Beginning of main part -->
+<table cellspacing="0" cellpadding="0" border="0" width="100%">
+<tr>
+  	<td width="150" valign="top" rowspan="2" style="padding-left:6px;width:150px">
+    	<!-- The Navigation at the left side -->
+		<table border="0" cellspacing="0" cellpadding="0" width="150">
+		<tr>
+	  		<td class="captionnavi" colspan="2">Go to</td>
+		</tr>
+		<tr>
+	  		<td>&nbsp;</td>
+		</tr>
+		<tr onMouseOver="SetColour('td1')" onMouseOut="RemoveColour('td1')">
+	  		<td class="navi" id="td1">
+				<a class="navi" href="http://www.anubisnet.de/index.php">Home</a>
+			</td>
+		</tr>
+		<tr onMouseOver="SetColour('td2')" onMouseOut="RemoveColour('td2')">
+	  		<td class="navi" id="td2">
+				<a class="navi" href="http://www.anubisnet.de/news">Hot News</a>
+			</td>
+		</tr>
+		<tr onMouseOver="SetColour('td3')" onMouseOut="RemoveColour('td3')">
+	  		<td class="navi" id="td3">
+				<a class="navi" href="http://www.anubisnet.de/products">Products</a>
+			</td>
+		</tr>
+		<tr onMouseOver="SetColour('td4')" onMouseOut="RemoveColour('td4')">
+	  		<td class="navi" id="td4">
+				<a class="navi" href="http://www.anubisnet.de/devel" >Development</a>
+			</td>
+		</tr>
+		<tr onMouseOver="SetColour('td5')" onMouseOut="RemoveColour('td5')">
+	  		<td class="navi" id="td5">
+	  			<a class="navi" href="http://www.anubisnet.de/support">Support</a>
+			</td>
+		</tr>
+		<tr onMouseOver="SetColour('td6')" onMouseOut="RemoveColour('td6')">
+	  		<td class="navi" id="td6">
+				<a class="navi" href="http://www.anubisnet.de/about">About</a>
+			</td>
+		</tr>
+		<tr>
+	  		<td>&nbsp;</td>
+		</tr>
+		</table>
+		<!-- End of Navigation -->
+
+		<br><br>
+
+		<!-- PayPal Button -->
+		<div align="center">
+		<p class="advertise">
+		You can help us:</p>
+		<form style="margin:3px;" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+		<input type="hidden" name="cmd" value="_xclick">
+		<input type="hidden" name="business" value="clergyman@gmx.de">
+		<input type="hidden" name="item_name" value="anubisnet Open Source Development">
+		<input type="hidden" name="item_number" value="General Development Support">
+		<input type="hidden" name="no_note" value="1">
+		<input type="hidden" name="currency_code" value="EUR">
+		<input type="hidden" name="tax" value="0">
+		<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" align="middle" border="0" name="submit" alt="Make payments with PayPal - it's fast, free and secure!">
+		<br>
+		</form>
+		<p class="advertise">(<a class="footer" href="volunteer">Get more information</a>.)</p>
+		</div>
+  </td>
+  <td width="15" rowspan="2">
+  	<img src="pics/pix.gif" width="15" height="1" border="0" alt="">
+  </td>
+  <td  valign="top" style="padding-right:6px;">
+  	<table border="0" cellspacing="0" cellpadding="0" width="100%">
+	<tr><td class="sitelink">
+	<a class="internal" href="http://www.anubisnet.de">Home</a> &gt;
+	<a class="internal" href="http://www.anubisnet.de/support">Support</a> &gt;
+	<a class="internal" href="http://www.anubisnet.de/support/doc">Documentation</a> &gt;
+	<a class="internal" href="http://www.anubisnet.de/support/doc/libdbf/html">libdbf</a>
+	</td></tr>
+	</table>
+  </td>
+  <!--<td style="width:3px;font-size:0.7em;">&nbsp;&nbsp;</td>-->
+</tr>
+<tr>
+  <td style="padding-top:20px; padding-right:7px; min-height:100%; width:558px;" valign="top">
+<!-- Generated by Doxygen 1.3.2 -->
+<div class="qindex"><a class="qindex" href="index.html">Main&nbsp;Page</a> | <a class="qindex" href="annotated.html">Data&nbsp;Structures</a> | <a class="qindex" href="files.html">File&nbsp;List</a> | <a class="qindexHL" href="functions.html">Data&nbsp;Fields</a> | <a class="qindex" href="globals.html">Globals</a></div>
+<div class="qindex"><a class="qindex" href="functions.html">All</a> | <a class="qindexHL" href="functions_vars.html">Variables</a></div>
+
+<p>
+<ul>
+<li>block_adress
+: <a class="el" href="structDB__MEMO__HEADER.html#o0">DB_MEMO_HEADER</a><li>block_length
+: <a class="el" href="structDB__MEMO__BLOCK__TOP.html#o1">DB_MEMO_BLOCK_TOP</a><li>block_size
+: <a class="el" href="structDB__MEMO__HEADER.html#o2">DB_MEMO_HEADER</a><li>calc_filesize
+: <a class="el" href="structP__DBF.html#o3">P_DBF</a><li>dbf_fh
+: <a class="el" href="structP__DBF.html#o0">P_DBF</a><li>dbt_fh
+: <a class="el" href="structP__DBF.html#o1">P_DBF</a><li>encryption
+: <a class="el" href="structDB__HEADER.html#o7">DB_HEADER</a><li>field_address
+: <a class="el" href="structDB__FIELD.html#o2">DB_FIELD</a><li>field_decimals
+: <a class="el" href="structDB__FIELD.html#o4">DB_FIELD</a><li>field_length
+: <a class="el" href="structDB__FIELD.html#o3">DB_FIELD</a><li>field_name
+: <a class="el" href="structDB__FIELD.html#o0">DB_FIELD</a><li>field_type
+: <a class="el" href="structDB__FIELD.html#o1">DB_FIELD</a><li>header_length
+: <a class="el" href="structDB__HEADER.html#o3">DB_HEADER</a><li>integrity
+: <a class="el" href="structP__DBF.html#o4">P_DBF</a><li>language
+: <a class="el" href="structDB__HEADER.html#o10">DB_HEADER</a><li>last_update
+: <a class="el" href="structDB__HEADER.html#o1">DB_HEADER</a><li>mdx
+: <a class="el" href="structDB__FIELD.html#o6">DB_FIELD</a>, <a class="el" href="structDB__HEADER.html#o9">DB_HEADER</a><li>real_filesize
+: <a class="el" href="structP__DBF.html#o2">P_DBF</a><li>record_length
+: <a class="el" href="structDB__HEADER.html#o4">DB_HEADER</a><li>records
+: <a class="el" href="structDB__HEADER.html#o2">DB_HEADER</a><li>reserved
+: <a class="el" href="structDB__MEMO__HEADER.html#o1">DB_MEMO_HEADER</a>, <a class="el" href="structDB__FIELD.html#o5">DB_FIELD</a><li>reserved01
+: <a class="el" href="structDB__HEADER.html#o5">DB_HEADER</a><li>reserved02
+: <a class="el" href="structDB__HEADER.html#o8">DB_HEADER</a><li>reserved03
+: <a class="el" href="structDB__HEADER.html#o11">DB_HEADER</a><li>reserved2
+: <a class="el" href="structDB__MEMO__HEADER.html#o3">DB_MEMO_HEADER</a><li>signature
+: <a class="el" href="structDB__MEMO__BLOCK__TOP.html#o0">DB_MEMO_BLOCK_TOP</a><li>transaction
+: <a class="el" href="structDB__HEADER.html#o6">DB_HEADER</a><li>version
+: <a class="el" href="structDB__HEADER.html#o0">DB_HEADER</a></ul>
+</td>
+</tr>
+</table>
+<br>
+</div>
+<div class="footer">
+<p class="copyright">anubisnet Open Source Software &middot; (c) Copyright 2002 - 2004<br>
+			All Rights Reserved. &middot; About the webmaster<br>
+			If you have problems with the site, please contact the
+			<a class="footer" href="mailto:info@anubisnet.de">webmaster</a>.<br>
+			<script language="JavaScript" src="http://m1.nedstatbasic.net/basic.js"></script>
+  			<script language="JavaScript">
+  			<!--
+  			   nedstatbasic("ABzGzAPmfqD7GQi1mUNspyjMkbHg", 0); //-->
+  			</script>
+  			<noscript>
+  			<a target="_blank" href="http://v1.nedstatbasic.net/stats?ABzGzAPmfqD7GQi1mUNspyjMkbHg">
+  			<img src="http://m1.nedstatbasic.net/n?id=ABzGzAPmfqD7GQi1mUNspyjMkbHg" border="0" nosave width="18"
+				height="18" align="top"></a>
+  			</noscript></p>
+</div>
+
+<!-- End of main part -->
+</body>
+</html>
