@@ -15,7 +15,10 @@
  *
  * History:
  * $Log$
- * Revision 1.2  2004-05-18 15:27:33  rollinhand
+ * Revision 1.3  2004-05-27 21:17:26  rollinhand
+ * introduced errmsg in p_dbf
+ *
+ * Revision 1.2  2004/05/18 15:27:33  rollinhand
  * splitted header file to libdbf und dbf. libdbf is official
  *
  * Revision 1.1  2004/05/14 20:37:17  rollinhand
@@ -98,18 +101,9 @@ int dbf_Open(const char *file, P_DBF *p_dbf)
 	if ((p_dbf->dbf_fh = open(file, O_RDONLY|O_BINARY)) == -1) {
 		return -1;
 	}
-
-	return 0;
-}
-
-int dbf_Connect(const char *file, P_DBF *p_dbf) {
-	if ( dbf_Open(file,p_dbf) == -1 ) {
-		perror("In Function Connect(): ");
-		return -1;
-	}
-
+	
 	if ( dbf_ReadHeaderInfo(p_dbf) == -1 ) {
-		perror("In function Connect(): ");
+		p_dbf->errmsg = perror("In function dbf_Open(): ");
 		return -1;
 	}
 
@@ -125,6 +119,7 @@ int dbf_Close(P_DBF *p_dbf)
 		return 0;
 
 	if( (close(p_dbf->dbf_fh)) == -1 ) {
+		p_dbf->errmsg = perror("In function dbf_Close(): ");
 		return -1;
 	}
 
@@ -142,7 +137,7 @@ int dbf_Numrows(P_DBF *p_dbf)
 	if ( header->records > 0 ) {
 		return header->records;
 	} else {
-		perror("In function Numrows(): ");
+		p_dbf->errmsg = perror("In function dbf_Numrows(): ");
 		return -1;
 	}
 
@@ -156,7 +151,7 @@ int dbf_Numcols(P_DBF *p_dbf)
 		return ((header->header_length - sizeof(DB_HEADER) -1)
 					 / sizeof(DB_FIELD));
 	} else {
-		perror("In function Numcols(): ");
+		p_dbf->errmsg = perror("In function dbf_Numcols(): ");
 		return -1;
 	}
 
@@ -180,7 +175,7 @@ int dbf_ReadFieldInfo(P_DBF *p_dbf, int column)
 			SEEK_SET);
 
 	if ((read( p_dbf->dbf_fh, (char*)db, sizeof(DB_FIELD))) == -1 ) {
-		perror("In function ColumMeta()");
+		p_dbf->errmsg = perror("In function dbf_ReadFieldInfo()");
 		return -1;
 	}
 
@@ -209,7 +204,7 @@ int dbf_ColumnSize(P_DBF *p_dbf, int column)
 const char dbf_ColumnType(P_DBF *p_dbf, int column)
 {
 	if ( dbf_ReadFieldInfo(p_dbf,column) != 0 ) {
-		//return -1;
+		return 'X';
 	}
 
 	return db->field_type;
@@ -249,7 +244,7 @@ const char *dbf_GetDate(P_DBF *p_dbf)
 
 		return date;
 	} else {
-		perror("In function GetDate(): ");
+		p_dbf->errmsg = perror("In function dbf_GetDate(): ");
 		return (char *)-1;
 	}
 
@@ -261,7 +256,7 @@ int dbf_HeaderSize(P_DBF *p_dbf)
  	if ( header->header_length > 0 ) {
 		return header->header_length;
 	} else {
-		perror("In function HeaderSize(): ");
+		p_dbf->errmsg = perror("In function dbf_HeaderSize(): ");
 		return -1;
 	}
 
@@ -273,7 +268,7 @@ int dbf_RecordLength(P_DBF *p_dbf)
  	if (header->record_length > 0) {
 		return header->record_length;
 	} else {
-		perror("In function RecordLength(): ");
+		p_dbf->errmsg = perror("In function dbf_RecordLength(): ");
 		return -1;
 	}
 
@@ -283,7 +278,7 @@ int dbf_RecordLength(P_DBF *p_dbf)
 const char *dbf_GetVersion(P_DBF *p_dbf, char *param)
 {
 	if ( header->version == 0 ) {
-		perror("In function GetVersion(): ");
+		p_dbf->errmsg = perror("In function dbf_GetVersion(): ");
 		return (char *)-1;
 	}
 
@@ -303,7 +298,7 @@ int dbf_IsMemo(P_DBF *p_dbf)
 	int memo;
 
 	if ( header->version == 0 ) {
-		perror("In function IsMemo(): ");
+		p_dbf->errmsg = perror("In function dbf_IsMemo(): ");
 		return -1;
 	}
 
