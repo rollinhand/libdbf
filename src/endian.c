@@ -4,56 +4,49 @@
  * Routines for Little Endian and Big Endian Systems
  * Library version
  *
- * Version 0.4, 2003-09-08
- * Author: Björn Berg, clergyman@gmx.de
+ * Author: Björn Berg <clergyman@gmx.de>, Uwe Steinmann <uwe@steinmann.cx>
  *
- * History:
- * 2003-09-08	berg	changes in u_int types, adapted to different system
- *						standards
- * 2003-05-09   jones	changes for AIX in IsBigEndian()
- * 2003-04-18	berg	endian.h splitted to endian.h and endian.c
- *						implemented fix by Uwe Steinmann
- * 2003-02-16	jones	the #ifndef inclusion guard only protected the #defines
- *						where it really needs to protect the whole file. Just
- *						moved the #endif to the end of the file.
- * 2003-02-09	jones	improved IsBigEndian function
- *						changes in rotate4b
- * 2003-02-01	berg	rotate2b / rotate4b added
- * 2002-12-12	berg	first implementation
+ *****************************************************************************
+ * $Id$
  ****************************************************************************/
 
 #include "endian.h"
 
 /*******************************************************************
- * Routine to test if System uses Big Endian or Little Endian
- *******************************************************************/
-_bool IsBigEndian() {
-#if defined(__aix__)
- return _true;
-#else
- int i = 1;
- int c = *((char*)&i);
- return c == 0;
-#endif
-}
-
-/*******************************************************************
  * Changes byte construction if dbf is used on another platform
- * than Little Endian. dBASE databases are written in Little Endian
+ * than little endian. dBASE databases are written in little endian
  * format.
  *******************************************************************/
-short rotate2b(short var) {
-	short tmp;
-	char *ptmp;
-	tmp = var;
-	ptmp = (char *) &tmp;
-	return(((short) ptmp[1] << 8) + (short) ptmp[0]);
-}
 
-unsigned int rotate4b(u_int32_t var) {
-	unsigned int tmp;
-	char *ptmp;
+/* rotate2b() {{{
+ * swap 4 byte integers
+ */
+u_int16_t rotate2b(u_int16_t var) {
+	u_int16_t tmp;
+	unsigned char *ptmp;
 	tmp = var;
-	ptmp = (char *) &tmp;
-	return(((unsigned int) ptmp[3] << 24) + ((unsigned int) ptmp[2] << 16) + ((unsigned int) ptmp[1] << 8) + (unsigned int) ptmp[0]);
+	ptmp = (unsigned char *) &tmp;
+	return(((u_int16_t) ptmp[1] << 8) + (u_int16_t) ptmp[0]);
 }
+/* }}} */
+
+/* rotate4b() {{{
+ * swap 4 byte integers
+ */
+u_int32_t rotate4b(u_int32_t var) {
+	u_int32_t tmp;
+	unsigned char *ptmp;
+	tmp = var;
+	ptmp = (unsigned char *) &tmp;
+	return(((u_int32_t) ptmp[3] << 24) + ((u_int32_t) ptmp[2] << 16) + ((u_int32_t) ptmp[1] << 8) + (u_int32_t) ptmp[0]);
+}
+/* }}} */
+
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: sw=4 ts=4 fdm=marker
+ * vim<600: sw=4 ts=4
+ */
