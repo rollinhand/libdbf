@@ -1,54 +1,54 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Uwe Steinmann <uwe@steinmann.cx>, 2004.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-08-27 09:03+0200\n"
+"POT-Creation-Date: 2004-08-30 12:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Last-Translator: Uwe Steinmann <uwe@steinmann.cx>\n"
+"Language-Team: DE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dbf.c:69
+#: src/dbf.c:75
 #, c-format
 msgid "Unknown (code 0x%.2X)"
 msgstr "Unbekannter code 0x%.2X"
 
-#: src/dbf.c:165
+#: src/dbf.c:178
 msgid "In function dbf_NumRows(): "
 msgstr "In Funktion dbf_NumRows(): "
 
-#: src/dbf.c:179
+#: src/dbf.c:196
 msgid "In function dbf_NumCols(): "
 msgstr "In Funktion dbf_NumCols(): "
 
-#: src/dbf.c:204
+#: src/dbf.c:226
 msgid "In function dbf_ReadFieldInfo(): "
 msgstr "In Funktion dbf_ReadFieldInfo(): "
 
-#: src/dbf.c:293
+#: src/dbf.c:338
 msgid "In function dbf_HeaderSize(): "
 msgstr "In Funktion dbf_HeaderSize(): "
 
-#: src/dbf.c:305
+#: src/dbf.c:354
 msgid "In function dbf_RecordLength(): "
 msgstr "In Funktion dbf_RecordLength(): "
 
-#: src/dbf.c:315
+#: src/dbf.c:368
 msgid "In function dbf_GetStringVersion(): "
 msgstr "In Funktion dbf_GetStringVersion(): "
 
-#: src/dbf.c:325
+#: src/dbf.c:382
 msgid "In function dbf_GetVersion(): "
 msgstr "In Funktion dbf_GetVersion(): "
 
-#: src/dbf.c:337
+#: src/dbf.c:397
 msgid "In function dbf_IsMemo(): "
 msgstr "In Funktion dbf_IsMemo(): "
