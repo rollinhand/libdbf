@@ -15,7 +15,10 @@
  *
  * History:
  * $Log$
- * Revision 1.5  2004-08-27 05:27:58  steinm
+ * Revision 1.6  2004-08-27 07:02:02  steinm
+ * - use gettext to output error messages
+ *
+ * Revision 1.5  2004/08/27 05:27:58  steinm
  * - various modification to api
  * - added functions to get record
  * - store header and fields of file in P_DBF for faster access
@@ -30,18 +33,11 @@
  * *** empty log message ***
  *
  * Revision 1.1.1.1  2004/05/14 20:30:36  rollinhand
- ***********************************************************************************/
+ *****************************************************************************/
 
 
 #include "../include/libdbf/libdbf.h"
 #include "dbf.h"
-
-//DB_FIELD db_buf, *db = &db_buf;
-
-/*static void dbf_GetLibVersion()
-{
-	fprintf(stderr, "libdbf (c) 2002 - 2004 by Bjoern Berg\n");
-}*/
 
 const char *get_db_version(int version) {
 	static char name[31];
@@ -166,7 +162,7 @@ int dbf_NumRows(P_DBF *p_dbf)
 	if ( p_dbf->header->records > 0 ) {
 		return p_dbf->header->records;
 	} else {
-		perror("In function Numrows(): ");
+		perror(_("In function dbf_NumRows(): "));
 		return -1;
 	}
 
@@ -180,7 +176,7 @@ int dbf_NumCols(P_DBF *p_dbf)
 		return ((p_dbf->header->header_length - sizeof(DB_HEADER) -1)
 					 / sizeof(DB_FIELD));
 	} else {
-		perror("In function Numcols(): ");
+		perror(_("In function dbf_NumCols(): "));
 		return -1;
 	}
 
@@ -205,7 +201,7 @@ int dbf_ReadFieldInfo(P_DBF *p_dbf)
 	lseek(p_dbf->dbf_fh, sizeof(DB_HEADER), SEEK_SET);
 
 	if ((read( p_dbf->dbf_fh, fields, columns * sizeof(DB_FIELD))) == -1 ) {
-		perror("In function ColumMeta()");
+		perror(_("In function dbf_ReadFieldInfo(): "));
 		return -1;
 	}
 	p_dbf->fields = fields;
@@ -294,7 +290,7 @@ int dbf_HeaderSize(P_DBF *p_dbf)
  	if ( p_dbf->header->header_length > 0 ) {
 		return p_dbf->header->header_length;
 	} else {
-		perror("In function HeaderSize(): ");
+		perror(_("In function dbf_HeaderSize(): "));
 		return -1;
 	}
 
@@ -306,7 +302,7 @@ int dbf_RecordLength(P_DBF *p_dbf)
  	if (p_dbf->header->record_length > 0) {
 		return p_dbf->header->record_length;
 	} else {
-		perror("In function RecordLength(): ");
+		perror(_("In function dbf_RecordLength(): "));
 		return -1;
 	}
 
@@ -316,7 +312,7 @@ int dbf_RecordLength(P_DBF *p_dbf)
 const char *dbf_GetStringVersion(P_DBF *p_dbf)
 {
 	if ( p_dbf->header->version == 0 ) {
-		perror("In function GetStringVersion(): ");
+		perror(_("In function dbf_GetStringVersion(): "));
 		return (char *)-1;
 	}
 
@@ -326,7 +322,7 @@ const char *dbf_GetStringVersion(P_DBF *p_dbf)
 int dbf_GetVersion(P_DBF *p_dbf)
 {
 	if ( p_dbf->header->version == 0 ) {
-		perror("In function GetVersion(): ");
+		perror(_("In function dbf_GetVersion(): "));
 		return -1;
 	}
 
@@ -338,7 +334,7 @@ int dbf_IsMemo(P_DBF *p_dbf)
 	int memo;
 
 	if ( p_dbf->header->version == 0 ) {
-		perror("In function IsMemo(): ");
+		perror(_("In function dbf_IsMemo(): "));
 		return -1;
 	}
 
