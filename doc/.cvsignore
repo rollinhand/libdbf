@@ -1,0 +1,6 @@
+Makefile
+Makefile.in
+*.3
+manpage.links
+manpage.refs
+
