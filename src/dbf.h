@@ -1,11 +1,11 @@
-/******************************************************************************
+/*****************************************************************************
  * dbf.h
- ******************************************************************************
+ *****************************************************************************
  * Library to read information from dBASE files
  * Author: Bjoern Berg, clergyman@gmx.de
  * (C) Copyright 2004, Björn Berg
  *
- ******************************************************************************
+ *****************************************************************************
  * Permission to use, copy, modify and distribute this software and its
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that copyright
@@ -13,27 +13,9 @@
  * author makes no representations about the suitability of this software for
  * any purpose. It is provided "as is" without express or implied warranty.
  *
- * History:
- * $Log$
- * Revision 1.4  2004-08-27 05:27:58  steinm
- * - various modification to api
- * - added functions to get record
- * - store header and fields of file in P_DBF for faster access
- *
- * Revision 1.3  2004/06/18 14:45:54  steinm
- * - complete switch to autotools
- *
- * Revision 1.2  2004/05/18 15:27:33  rollinhand
- * splitted header file to libdbf und dbf. libdbf is official
- *
- * Revision 1.1  2004/05/14 20:37:17  rollinhand
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2004/05/14 20:30:36  rollinhand
- *
- *
- *
- ***********************************************************************************/
+ *****************************************************************************
+ * $Id$
+ ****************************************************************************/
 
 #ifndef __DBF_CORE__
 #define __DBF_CORE__
@@ -140,7 +122,7 @@ typedef struct {
 	Offsets of this header are the same in all versions of dBASE
 	\warning It is recommend not to access DB_FIELD directly.
  */
-typedef struct {
+struct _DB_FIELD {
 	/*! Byte: 0-10; fieldname in ASCII */
 	unsigned char field_name[11];
 	/*! Byte: 11; field type in ASCII (C, D, L, M or N) */
@@ -157,7 +139,7 @@ typedef struct {
 	unsigned char reserved2[7];
 	/*! Byte: 31; Production MDX field flag */
 	unsigned char mdx;
-} DB_FIELD;
+};
 
 /*! \struct P_DBF
 	\brief P_DBF is a global file handler
@@ -236,19 +218,6 @@ struct DB_MEMO_BLOCK_TOP {
 
 /* [1] Integers stored with the most
 significant byte first.    */
-
-
-/*! \fn int dbf_HeaderSize(P_DBF *p_dbf)
-	\brief dbf_HeaderSize returns length of dBASE header
-	\param *p_dbf the filehandler of the opened file
-
-	dbf_HeaderSize returns length of dBASE header
-
-	\return header length or -1 on error
-*/
-int dbf_HeaderSize(P_DBF *p_dbf);
-
-int dbf_ReadFieldInfo(P_DBF *p_dbf);
 
 
 #endif
