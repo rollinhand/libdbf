@@ -15,21 +15,21 @@
  *
  * History:
  * $Log$
- * Revision 1.1  2004-05-14 20:37:17  rollinhand
+ * Revision 1.2  2004-05-18 15:27:33  rollinhand
+ * splitted header file to libdbf und dbf. libdbf is official
+ *
+ * Revision 1.1  2004/05/14 20:37:17  rollinhand
  * *** empty log message ***
  *
  * Revision 1.1.1.1  2004/05/14 20:30:36  rollinhand
- *
- *
- *
  ***********************************************************************************/
 
 
 #include "dbf.h"
+#include "libdbf.h"
 
 DB_HEADER h_buf, *header = &h_buf;
 DB_FIELD db_buf, *db = &db_buf;
-DB_FSIZE *fsz;
 
 /*static void dbf_GetLibVersion()
 {
