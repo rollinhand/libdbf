@@ -18,6 +18,7 @@ done
 aclocal
 autoheader
 automake --verbose --force --copy --add-missing
+libtoolize --copy --force
 intltoolize --copy --force
 autoconf
 
