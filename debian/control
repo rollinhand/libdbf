@@ -1,0 +1,19 @@
+Source: libdbf
+Priority: optional
+Maintainer: Uwe Steinmann <steinm@debian.org>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: libdbf-dev
+Section: devel
+Architecture: any
+Depends: libdbf1 (= ${Source-Version})
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: libdbf1
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
