@@ -8,7 +8,7 @@ set -e
 
 # Check if needed software is available on system
 echo -n "Check Build Environment..."
-for tool in aclocal autoheader automake libtoolize intltoolize autoconf; do
+for tool in aclocal autoreconf autoheader automake libtoolize intltoolize autoconf; do
 	test ! `whereis ${tool} | awk '{print $2}'` && {
 		echo " not OK"
 		echo "${tool} not found - please install first!"
@@ -20,28 +20,28 @@ echo " OK"
 # Refresh GNU autotools toolchain.
 # Test if /usr/share/automake exists, else prove for automake-$version
 # This test-case is e.g. needed for SuSE distributions
-automk="automake"
-test ! -d /usr/share/automake && {
-	version=`automake --version | head -n 1 | awk '{print $4}' | awk -F. '{print $1"."$2}'`
-	automk="automake-${version}"
-}
+#automk="automake"
+#test ! -d /usr/share/automake && {
+#	version=`automake --version | head -n 1 | awk '{print $4}' | awk -F. '{print $1"."$2}'`
+#	automk="automake-${version}"
+#}
 
-echo ${automk}
- 	
-for i in config.guess config.sub missing install-sh mkinstalldirs ; do
-	test -r /usr/share/${automk}/${i} && {
-		rm -f ${i}
-		cp /usr/share/${automk}/${i} .
-	}
-	chmod 755 ${i}
-done
+#for i in config.guess config.sub missing install-sh mkinstalldirs ; do
+#	test -r /usr/share/${automk}/${i} && {
+#		rm -f ${i}
+#		cp /usr/share/${automk}/${i} .
+#	}
+#	chmod 755 ${i}
+#done
 
 aclocal
 autoheader
-automake --verbose --force --copy --add-missing
+#automake --verbose --force-missing --copy --add-missing --warnings=all
+autoreconf -i -f -v --warnings=all
 libtoolize --copy --force
 intltoolize --copy --force
 autoconf
+
 
 # For the Debian build
 test -d debian && {
