@@ -15,7 +15,11 @@
  *
  * History:
  * $Log$
- * Revision 1.1  2004-06-18 14:45:54  steinm
+ * Revision 1.2  2004-08-27 05:29:03  steinm
+ * - definition of internal structs removed
+ * - added defines for different versions of a dbf file
+ *
+ * Revision 1.1  2004/06/18 14:45:54  steinm
  * - complete switch to autotools
  *
  * Revision 1.2  2004/05/27 21:16:56  rollinhand
@@ -66,46 +70,55 @@
  	 any purpose. It is provided "as is" without express or implied warranty.</p>
 */
 
-/*! \struct P_DBF
-	\brief P_DBF is a global file handler
+/*! \def FoxBase Code for FoxBase */
+#define FoxBase 0x02
+/*! \def FoxBasePlus Code for FoxBasePlus, same as for dBase III */
+#define FoxBasePlus 0x03
+/*! \def dBase3 Code for dBase III */
+#define dBase3 0x03
+/*! \def dBase3WM Code for dBase III with memo fields */
+#define dBase3WM 0x83
+/*! \def dBase4 Code for dBase IV */
+#define dBase4 0x04
+/*! \def dBase4WM Code for dBase IV with memo fields */
+#define dBase4WM 0x8B
+/*! \def dBase4SQL Code for dBase IV with SQL table */
+#define dBase4SQL 0x8E
+/*! \def dBase5 Code for dBase 5.0 */
+#define dBase5 0x05
+/*! \def FoxPro2WM Code for FoxPro 2.0 (or earlier) with memo fields */
+#define FoxPro2WM 0xF5
+/*! \def VisualFoxPro Code for Visual FoxPro without memo fields */
+#define VisualFoxPro 0x30
 
-	P_DBF store the file handlers for the dbf-file and if exists
-	the appropriate memo file.
-*/
-typedef struct {
-	/*! filehandler of *.dbf */
-	int dbf_fh;
-	/*! filehandler of memo */
-	int dbt_fh;
-	/*! the pysical size of the file, as stated from filesystem */
-	u_int32_t real_filesize;
-	/*! the calculated filesize */
-	u_int32_t calc_filesize;
-	/*! integrity could be: valid, invalid */
-	unsigned char integrity[7];
-	/*! errorhandler, maximum of 254 characters */
-	char errmsg[254];
-} P_DBF;
+typedef struct _P_DBF P_DBF;
 
 /*
  *	FUNCTIONS
  */
 
-/*! \fn dbf_GetLibVersion()
-	\brief outputs the version of libdbf
+/*! \fn dbf_GetVersion(P_DBF *p_dbf)
+	\brief return the version of dbf file as string
 */
-static void dbf_GetLibVersion();
+const char *dbf_GetStringVersion(P_DBF *p_dbf);
 
-/*! \fn int dbf_Open (const char *file, P_DBF *p_dbf)
-	\brief dbf_Open opens a dBASE \a file and stores the filehandler in \a P_DBF
+/*! \fn dbf_GetVersion(P_DBF *p_dbf)
+	\brief return the version of dbf file
+	\param *p_dbf the filehandler of the opened file
+
+	\return version or -1 on error
+*/
+int dbf_GetVersion(P_DBF *p_dbf);
+
+/*! \fn P_DBF *dbf_Open (const char *file)
+	\brief dbf_Open opens a dBASE \a file and returns the object handle
 	\param file the filename of the dBASE file
-	\param *p_dbf the filehandler of the opened file is stored in it	
 
-	dbf_Connect opens a dBASE file and stores the filehandler in the global P_DBF.
+	dbf_Connect opens a dBASE file and returns the object handle.
 	Additionally information about the dBASE header are read in.
-	\return 0 if connection was successful and -1 if not.
+	\return NULL in case of an error.
 */
-int dbf_Open (const char *file, P_DBF *p_dbf);
+P_DBF *dbf_Open (const char *file);
 
 /*! \fn int dbf_Close (P_DBF *p_dbf)
 	\brief dbf_Close closes a dBASE file.
@@ -117,23 +130,23 @@ int dbf_Open (const char *file, P_DBF *p_dbf);
 int dbf_Close (P_DBF *p_dbf);
 
 // Functions to info about rows and columns
-/*! \fn int dbf_Numrows (P_DBF *p_dbf)
-	\brief dbf_Numrows returns the number of datasets/rows
+/*! \fn int dbf_NumRows (P_DBF *p_dbf)
+	\brief dbf_NumRows returns the number of datasets/rows
 	\param *p_dbf the filehandler of the opened file
 
-	dbf_Numrows returns the number of datasets/rows. Returnvalues are
+	dbf_NumRows returns the number of datasets/rows. Returnvalues are
 	number of rows or -1 if determination of rows fails.
 */
-int dbf_Numrows (P_DBF *p_dbf);
+int dbf_NumRows (P_DBF *p_dbf);
 
-/*! \fn int dbf_Numcols (P_DBF *p_dbf)
-	\brief dbf_Numcols returns the number of attributes/columns
+/*! \fn int dbf_NumCols (P_DBF *p_dbf)
+	\brief dbf_NumCols returns the number of attributes/columns
 	\param *p_dbf the filehandler of the opened file
 
-	dbf_Numcols returns the number of attributes/columns. Returnvalues are
+	dbf_NumCols returns the number of attributes/columns. Returnvalues are
 	number of columns or -1 if determination of rows fails.
 */
-int dbf_Numcols (P_DBF *p_dbf);
+int dbf_NumCols (P_DBF *p_dbf);
 
 /*! \fn const char *dbf_ColumnName(P_DBF *p_dbf, int column)
 	\brief dbf_ColumnName returns the name of a selected \a column
@@ -142,7 +155,7 @@ int dbf_Numcols (P_DBF *p_dbf);
 
 	dbf_ColumnName returns the name of a selected column. Columnumber
 	starts with 1, maximum number of columns can be determined with
-	dbf_Numcols.
+	dbf_NumCols.
 	\return Name of column or -1 on error
 */
 const char *dbf_ColumnName(P_DBF *p_dbf, int column);
@@ -154,7 +167,7 @@ const char *dbf_ColumnName(P_DBF *p_dbf, int column);
 
 	dbf_ColumnSize returns the field length of a column. Columnumber
 	starts with 1, maximum number of columns can be determined with
-	dbf_Numcols.
+	dbf_NumCols.
 	\return field length of column or -1 on error
 */
 int dbf_ColumnSize(P_DBF *p_dbf, int column);
@@ -166,7 +179,7 @@ int dbf_ColumnSize(P_DBF *p_dbf, int column);
 
 	dbf_ColumnType returns the type of a field resp. column. Columnumber
 	starts with 1, maximum number of columns can be determined with
-	dbf_Numcols.
+	dbf_NumCols.
 	\return field type of column or -1 on error
 */
 const char dbf_ColumnType(P_DBF *p_dbf, int column);
@@ -212,19 +225,6 @@ const char *dbf_GetDate(P_DBF *p_dbf);
 	\return record length or -1 on error
 */
 int dbf_RecordLength(P_DBF *p_dbf);
-
-/*! \fn const char *dbf_GetVersion(P_DBF *p_dbf, char *param)
-	\brief dbf_GetVersion returns the version as text or number
-	\param *p_dbf the filehandler of the opened file
-	\param param expects "text" or "numeric"
-
-	dbf_GetVersion returns the version of the dbf file as text or
-	number depending on the parameter "text" or "numeric"
-
-	\return version or -1 on error
-	\warning parameter numeric does not work yet.
-*/
-const char *dbf_GetVersion(P_DBF *p_dbf, char *param);
 
 /*! \fn int dbf_IsMemo(P_DBF *p_dbf)
 	\brief dbf_IsMemo tells if dbf provides also a memo file
