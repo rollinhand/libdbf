@@ -15,7 +15,12 @@
  *
  * History:
  * $Log$
- * Revision 1.3  2004-06-18 14:45:54  steinm
+ * Revision 1.4  2004-08-27 05:27:58  steinm
+ * - various modification to api
+ * - added functions to get record
+ * - store header and fields of file in P_DBF for faster access
+ *
+ * Revision 1.3  2004/06/18 14:45:54  steinm
  * - complete switch to autotools
  *
  * Revision 1.2  2004/05/18 15:27:33  rollinhand
@@ -86,27 +91,6 @@
  */
 #include "endian.h"
 
-/*! \def FoxBase Code for FoxBase */
-#define FoxBase 0x02
-/*! \def FoxBasePlus Code for FoxBasePlus, same as for dBase III */
-#define FoxBasePlus 0x03
-/*! \def dBase3 Code for dBase III */
-#define dBase3 0x03
-/*! \def dBase3WM Code for dBase III with memo fields */
-#define dBase3WM 0x83
-/*! \def dBase4 Code for dBase IV */
-#define dBase4 0x04
-/*! \def dBase4WM Code for dBase IV with memo fields */
-#define dBase4WM 0x8B
-/*! \def dBase4SQL Code for dBase IV with SQL table */
-#define dBase4SQL 0x8E
-/*! \def dBase5 Code for dBase 5.0 */
-#define dBase5 0x05
-/*! \def FoxPro2WM Code for FoxPro 2.0 (or earlier) with memo fields */
-#define FoxPro2WM 0xF5
-/*! \def VisualFoxPro Code for Visual FoxPro without memo fields */
-#define VisualFoxPro 0x30
-
 //@{
 /** These defines are used to distinguish between types in the dbf fields. */
 #define IS_STRING 1
@@ -168,10 +152,41 @@ typedef struct {
 	/*! Byte: 17; field decimal count in binary */
 	unsigned char field_decimals;
 	/*! Byte: 18-30; reserved */
-	unsigned char reserved[13];
+	unsigned char reserved1[2];
+	u_int32_t field_offset;
+	unsigned char reserved2[7];
 	/*! Byte: 31; Production MDX field flag */
 	unsigned char mdx;
 } DB_FIELD;
+
+/*! \struct P_DBF
+	\brief P_DBF is a global file handler
+
+	P_DBF store the file handlers for the dbf-file and if exists
+	the appropriate memo file.
+*/
+struct _P_DBF {
+	/*! filehandler of *.dbf */
+	int dbf_fh;
+	/*! filehandler of memo */
+	int dbt_fh;
+	/*! the pysical size of the file, as stated from filesystem */
+	u_int32_t real_filesize;
+	/*! the calculated filesize */
+	u_int32_t calc_filesize;
+	/*! header of .dbf file */
+	DB_HEADER *header;
+	/*! array of field specification */
+	DB_FIELD *fields;
+	/*! number of fields */
+	u_int32_t columns;
+	/*! integrity could be: valid, invalid */
+	unsigned char integrity[7];
+	/*! record counter */
+	int cur_record;
+	/*! errorhandler, maximum of 254 characters */
+	char errmsg[254];
+};
 
 
 
@@ -233,6 +248,7 @@ significant byte first.    */
 */
 int dbf_HeaderSize(P_DBF *p_dbf);
 
+int dbf_ReadFieldInfo(P_DBF *p_dbf);
 
 
 #endif
