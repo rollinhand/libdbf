@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-06-18 16:40+0200\n"
+"POT-Creation-Date: 2004-08-27 09:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,11 +16,39 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/dbf.c:66
+#: src/dbf.c:69
 #, c-format
 msgid "Unknown (code 0x%.2X)"
 msgstr "Unbekannter code 0x%.2X"
 
-#: src/dbf.c:107 src/dbf.c:112
-msgid "In function Connect(): "
-msgstr "In Funktion Connect(): "
+#: src/dbf.c:165
+msgid "In function dbf_NumRows(): "
+msgstr "In Funktion dbf_NumRows(): "
+
+#: src/dbf.c:179
+msgid "In function dbf_NumCols(): "
+msgstr "In Funktion dbf_NumCols(): "
+
+#: src/dbf.c:204
+msgid "In function dbf_ReadFieldInfo(): "
+msgstr "In Funktion dbf_ReadFieldInfo(): "
+
+#: src/dbf.c:293
+msgid "In function dbf_HeaderSize(): "
+msgstr "In Funktion dbf_HeaderSize(): "
+
+#: src/dbf.c:305
+msgid "In function dbf_RecordLength(): "
+msgstr "In Funktion dbf_RecordLength(): "
+
+#: src/dbf.c:315
+msgid "In function dbf_GetStringVersion(): "
+msgstr "In Funktion dbf_GetStringVersion(): "
+
+#: src/dbf.c:325
+msgid "In function dbf_GetVersion(): "
+msgstr "In Funktion dbf_GetVersion(): "
+
+#: src/dbf.c:337
+msgid "In function dbf_IsMemo(): "
+msgstr "In Funktion dbf_IsMemo(): "
