@@ -36,8 +36,9 @@ echo " OK"
 
 aclocal
 autoheader
-#automake --verbose --force-missing --copy --add-missing --warnings=all
-autoreconf -i -f -v --warnings=all
+automake --verbose --copy --add-missing 
+glib-gettextize --force --copy
+#autoreconf -i -f -v --warnings=all
 libtoolize --copy --force
 intltoolize --copy --force
 autoconf
