@@ -1,6 +1,6 @@
-/******************************************************************************
+/****************************************************************************
  * liblibdbf.h
- ******************************************************************************
+ ****************************************************************************
  * Library to read information from dBASE files
  * Author: Bjoern Berg, clergyman@gmx.de
  * (C) Copyright 2004, Björn Berg
@@ -13,20 +13,8 @@
  * author makes no representations about the suitability of this software for
  * any purpose. It is provided "as is" without express or implied warranty.
  *
- * History:
- * $Log$
- * Revision 1.2  2004-08-27 05:29:03  steinm
- * - definition of internal structs removed
- * - added defines for different versions of a dbf file
- *
- * Revision 1.1  2004/06/18 14:45:54  steinm
- * - complete switch to autotools
- *
- * Revision 1.2  2004/05/27 21:16:56  rollinhand
- * deleted dbf_Connect, makes no sense
- *
- * Revision 1.1  2004/05/18 15:29:02  rollinhand
- * official include to libdbf 
+ *****************************************************************************
+ * $Id$
  ****************************************************************************/
 
 #include <sys/types.h>
@@ -91,6 +79,11 @@
 /*! \def VisualFoxPro Code for Visual FoxPro without memo fields */
 #define VisualFoxPro 0x30
 
+/*! \brief Object handle for dBASE file
+
+  A pointer of type P_DBF is used by all functions except for \ref dbf_Open
+	which returns it if the dBASE file could be successfully opened.
+*/
 typedef struct _P_DBF P_DBF;
 
 /*
@@ -98,13 +91,14 @@ typedef struct _P_DBF P_DBF;
  */
 
 /*! \fn dbf_GetVersion(P_DBF *p_dbf)
-	\brief return the version of dbf file as string
+	\brief return the version of dbf file as a human readable string
+	\param *p_dbf the object handle of the opened file
 */
 const char *dbf_GetStringVersion(P_DBF *p_dbf);
 
 /*! \fn dbf_GetVersion(P_DBF *p_dbf)
 	\brief return the version of dbf file
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
 	\return version or -1 on error
 */
@@ -114,100 +108,108 @@ int dbf_GetVersion(P_DBF *p_dbf);
 	\brief dbf_Open opens a dBASE \a file and returns the object handle
 	\param file the filename of the dBASE file
 
-	dbf_Connect opens a dBASE file and returns the object handle.
-	Additionally information about the dBASE header are read in.
+	Opens a dBASE file and returns the object handle.
+	Additional information from the dBASE header are read and stored
+	internally.
 	\return NULL in case of an error.
 */
 P_DBF *dbf_Open (const char *file);
 
 /*! \fn int dbf_Close (P_DBF *p_dbf)
 	\brief dbf_Close closes a dBASE file.
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
-	dbf_Close closes a dBASE file.
-	It returns 0 if connection was successful and -1 if not.
+	Closes a dBASE file and frees all memory.
+	\return 0 if closing was successful and -1 if not.
 */
 int dbf_Close (P_DBF *p_dbf);
 
 // Functions to info about rows and columns
 /*! \fn int dbf_NumRows (P_DBF *p_dbf)
 	\brief dbf_NumRows returns the number of datasets/rows
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
-	dbf_NumRows returns the number of datasets/rows. Returnvalues are
-	number of rows or -1 if determination of rows fails.
+	Returns the number of datasets/rows.
+	\return Number of rows or -1 in case of an error.
 */
 int dbf_NumRows (P_DBF *p_dbf);
 
 /*! \fn int dbf_NumCols (P_DBF *p_dbf)
 	\brief dbf_NumCols returns the number of attributes/columns
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
-	dbf_NumCols returns the number of attributes/columns. Returnvalues are
-	number of columns or -1 if determination of rows fails.
+	Returns the number of fields/columns.
+	\return Number of columns or -1 in case of an error.
 */
 int dbf_NumCols (P_DBF *p_dbf);
 
 /*! \fn const char *dbf_ColumnName(P_DBF *p_dbf, int column)
 	\brief dbf_ColumnName returns the name of a selected \a column
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 	\param column the number of the column
 
-	dbf_ColumnName returns the name of a selected column. Columnumber
-	starts with 1, maximum number of columns can be determined with
-	dbf_NumCols.
+	Returns the name of a selected column.
+	The first column has number 0. The maximum number of columns can
+	be determined with \ref dbf_NumCols.
 	\return Name of column or -1 on error
 */
 const char *dbf_ColumnName(P_DBF *p_dbf, int column);
 
 /*! \fn int dbf_ColumnSize(P_DBF *p_dbf, int column);
 	\brief dbf_ColumnSize returns the field length of a column
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 	\param column the number of the column
 
-	dbf_ColumnSize returns the field length of a column. Columnumber
-	starts with 1, maximum number of columns can be determined with
-	dbf_NumCols.
+	Returns the field length of a column.
+	The first column has number 0. The maximum number of columns can
+	be determined with \ref dbf_NumCols.
 	\return field length of column or -1 on error
 */
 int dbf_ColumnSize(P_DBF *p_dbf, int column);
 
 /*! \fn const char dbf_ColumnType(P_DBF *p_dbf, int column)
 	\brief dbf_ColumnType returns the type of a field resp. column
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 	\param column the number of the column
 
-	dbf_ColumnType returns the type of a field resp. column. Columnumber
-	starts with 1, maximum number of columns can be determined with
-	dbf_NumCols.
+	Returns the type of a column. Type can be any
+	of 'N' (number), 'C' (string), 'D' (data), 'M' (memo), 'L' (boolean)
+	for dBASE III files.
+	The first column has number 0. The maximum number of columns can
+	be determined with \ref dbf_NumCols.
 	\return field type of column or -1 on error
 */
 const char dbf_ColumnType(P_DBF *p_dbf, int column);
 
 /*! \fn int dbf_ColumnDecimals(P_DBF *p_dbf, int column)
 	\brief
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 	\param column the number of the column
 
-
-	\return decimals of column or -1 on error
+	Returns the number of digits right to the
+	decimal point.
+	The first column has number 0. The maximum number of columns can
+	be determined with \ref dbf_NumCols.
+	\return Number of decimals of column or -1 on error
 */
 int dbf_ColumnDecimals(P_DBF *p_dbf, int column);
 
 /*! \fn u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column)
 	\brief dbf_ColumnAddress returns the address of a column
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 	\param column the number of the column
 
-	\return address of column or -1 on error
+	The first column has number 0. The maximum number of columns can
+	be determined with \ref dbf_NumCols.
+	\return Address of column or -1 on error
 */
 u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column);
 
 /*! \fn const char *dbf_GetDate(P_DBF *p_dbf)
 	\brief dbf_GetDate returns a formatted date string
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
-	dbf_GetDate returns a formatted date string of the type
+	Returns a formatted date string of the type
 	yyyy-mm-dd. The date indicates the time the file was last
 	modified.
 
@@ -217,10 +219,10 @@ const char *dbf_GetDate(P_DBF *p_dbf);
 
 /*! \fn int dbf_RecordLength(P_DBF *p_dbf)
 	\brief dbf_RecordLength returns length of a dataset
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
-	dbf_RecordLength returns length of a dataset. Do not confuse this
-	with dbf_HeaderSize().
+	Returns the length of a dataset. Do not confuse this
+	with \ref dbf_HeaderSize.
 
 	\return record length or -1 on error
 */
@@ -228,9 +230,9 @@ int dbf_RecordLength(P_DBF *p_dbf);
 
 /*! \fn int dbf_IsMemo(P_DBF *p_dbf)
 	\brief dbf_IsMemo tells if dbf provides also a memo file
-	\param *p_dbf the filehandler of the opened file
+	\param *p_dbf the object handle of the opened file
 
-	dbf_IsMemo tells if dbf provides also a memo file
+	dbf_IsMemo indicates if dbf provides also a memo file
 
 	\return 0 no memo, 1 memo, -1 on error
 */
