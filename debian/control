@@ -5,7 +5,7 @@ Maintainer: Uwe Steinmann <steinm@debian.org>
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
 
-Package: libdbf0-dev
+Package: libdbf-dev
 Section: devel
 Architecture: any
 Depends: libdbf0 (= ${Source-Version})
