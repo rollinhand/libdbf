@@ -228,6 +228,16 @@ const char *dbf_GetDate(P_DBF *p_dbf);
 */
 int dbf_RecordLength(P_DBF *p_dbf);
 
+/*! \fn int dbf_HeaderSize(P_DBF *p_dbf)
+	\brief dbf_HeaderSize returns length of the header
+	\param *p_dbf the object handle of the opened file
+
+	Returns the length of the header.
+
+	\return header length or -1 on error
+*/
+int dbf_HeaderSize(P_DBF *p_dbf);
+
 /*! \fn int dbf_IsMemo(P_DBF *p_dbf)
 	\brief dbf_IsMemo tells if dbf provides also a memo file
 	\param *p_dbf the object handle of the opened file
