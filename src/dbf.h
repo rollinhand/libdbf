@@ -15,7 +15,10 @@
  *
  * History:
  * $Log$
- * Revision 1.2  2004-05-18 15:27:33  rollinhand
+ * Revision 1.3  2004-06-18 14:45:54  steinm
+ * - complete switch to autotools
+ *
+ * Revision 1.2  2004/05/18 15:27:33  rollinhand
  * splitted header file to libdbf und dbf. libdbf is official
  *
  * Revision 1.1  2004/05/14 20:37:17  rollinhand
@@ -29,6 +32,15 @@
 
 #ifndef __DBF_CORE__
 #define __DBF_CORE__
+
+#include "config.h"
+
+#ifdef ENABLE_NLS
+#include <libintl.h>
+#define _(a) dgettext(GETTEXT_PACKAGE, a)
+#else
+#define _(a) a
+#endif
 
 #ifdef __unix__
 #include <sys/types.h>

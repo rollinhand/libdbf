@@ -15,8 +15,8 @@
  *
  * History:
  * $Log$
- * Revision 1.3  2004-05-27 21:17:26  rollinhand
- * introduced errmsg in p_dbf
+ * Revision 1.4  2004-06-18 14:45:54  steinm
+ * - complete switch to autotools
  *
  * Revision 1.2  2004/05/18 15:27:33  rollinhand
  * splitted header file to libdbf und dbf. libdbf is official
@@ -28,8 +28,8 @@
  ***********************************************************************************/
 
 
+#include "libdbf/libdbf.h"
 #include "dbf.h"
-#include "libdbf.h"
 
 DB_HEADER h_buf, *header = &h_buf;
 DB_FIELD db_buf, *db = &db_buf;
@@ -66,7 +66,7 @@ const char *get_db_version (int version) {
 			// with memo fields
 			return "FoxPro 2.0";
 		default:
-			sprintf(name, "Unknown (code 0x%.2X)", version);
+			sprintf(name, _("Unknown (code 0x%.2X)"), version);
 			return name;
 	}
 }
@@ -101,9 +101,18 @@ int dbf_Open(const char *file, P_DBF *p_dbf)
 	if ((p_dbf->dbf_fh = open(file, O_RDONLY|O_BINARY)) == -1) {
 		return -1;
 	}
-	
+
+	return 0;
+}
+
+int dbf_Connect(const char *file, P_DBF *p_dbf) {
+	if ( dbf_Open(file,p_dbf) == -1 ) {
+		perror(_("In function Connect(): "));
+		return -1;
+	}
+
 	if ( dbf_ReadHeaderInfo(p_dbf) == -1 ) {
-		p_dbf->errmsg = perror("In function dbf_Open(): ");
+		perror(_("In function Connect(): "));
 		return -1;
 	}
 
@@ -119,7 +128,6 @@ int dbf_Close(P_DBF *p_dbf)
 		return 0;
 
 	if( (close(p_dbf->dbf_fh)) == -1 ) {
-		p_dbf->errmsg = perror("In function dbf_Close(): ");
 		return -1;
 	}
 
@@ -137,7 +145,7 @@ int dbf_Numrows(P_DBF *p_dbf)
 	if ( header->records > 0 ) {
 		return header->records;
 	} else {
-		p_dbf->errmsg = perror("In function dbf_Numrows(): ");
+		perror("In function Numrows(): ");
 		return -1;
 	}
 
@@ -151,7 +159,7 @@ int dbf_Numcols(P_DBF *p_dbf)
 		return ((header->header_length - sizeof(DB_HEADER) -1)
 					 / sizeof(DB_FIELD));
 	} else {
-		p_dbf->errmsg = perror("In function dbf_Numcols(): ");
+		perror("In function Numcols(): ");
 		return -1;
 	}
 
@@ -175,7 +183,7 @@ int dbf_ReadFieldInfo(P_DBF *p_dbf, int column)
 			SEEK_SET);
 
 	if ((read( p_dbf->dbf_fh, (char*)db, sizeof(DB_FIELD))) == -1 ) {
-		p_dbf->errmsg = perror("In function dbf_ReadFieldInfo()");
+		perror("In function ColumMeta()");
 		return -1;
 	}
 
@@ -204,7 +212,7 @@ int dbf_ColumnSize(P_DBF *p_dbf, int column)
 const char dbf_ColumnType(P_DBF *p_dbf, int column)
 {
 	if ( dbf_ReadFieldInfo(p_dbf,column) != 0 ) {
-		return 'X';
+		//return -1;
 	}
 
 	return db->field_type;
@@ -244,7 +252,7 @@ const char *dbf_GetDate(P_DBF *p_dbf)
 
 		return date;
 	} else {
-		p_dbf->errmsg = perror("In function dbf_GetDate(): ");
+		perror("In function GetDate(): ");
 		return (char *)-1;
 	}
 
@@ -256,7 +264,7 @@ int dbf_HeaderSize(P_DBF *p_dbf)
  	if ( header->header_length > 0 ) {
 		return header->header_length;
 	} else {
-		p_dbf->errmsg = perror("In function dbf_HeaderSize(): ");
+		perror("In function HeaderSize(): ");
 		return -1;
 	}
 
@@ -268,7 +276,7 @@ int dbf_RecordLength(P_DBF *p_dbf)
  	if (header->record_length > 0) {
 		return header->record_length;
 	} else {
-		p_dbf->errmsg = perror("In function dbf_RecordLength(): ");
+		perror("In function RecordLength(): ");
 		return -1;
 	}
 
@@ -278,7 +286,7 @@ int dbf_RecordLength(P_DBF *p_dbf)
 const char *dbf_GetVersion(P_DBF *p_dbf, char *param)
 {
 	if ( header->version == 0 ) {
-		p_dbf->errmsg = perror("In function dbf_GetVersion(): ");
+		perror("In function GetVersion(): ");
 		return (char *)-1;
 	}
 
@@ -298,7 +306,7 @@ int dbf_IsMemo(P_DBF *p_dbf)
 	int memo;
 
 	if ( header->version == 0 ) {
-		p_dbf->errmsg = perror("In function dbf_IsMemo(): ");
+		perror("In function IsMemo(): ");
 		return -1;
 	}
 
