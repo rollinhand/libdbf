@@ -5,14 +5,14 @@ Maintainer: Uwe Steinmann <steinm@debian.org>
 Build-Depends: debhelper (>= 4.0.0)
 Standards-Version: 3.6.0
 
-Package: libdbf-dev
+Package: libdbf0-dev
 Section: devel
 Architecture: any
-Depends: libdbf1 (= ${Source-Version})
+Depends: libdbf0 (= ${Source-Version})
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 
-Package: libdbf1
+Package: libdbf0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
