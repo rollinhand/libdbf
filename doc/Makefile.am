@@ -9,9 +9,9 @@ libdbf.3: libdbf.sgml
 	docbook2html $<
 	mv index.html $@
 
-distclean: clean
+distclean-local: clean-local
 
-clean:
+clean-local:
 	rm -f ${man_MANS}
 
 SGML_FILES = 
@@ -20,6 +20,6 @@ EXTRA_DIST = ${SGML_FILES} libdbf.sgml
 
 man_MANS = $(SGML_FILES:.sgml=.3) libdbf.3
 
-html: $(SGML_FILES:.sgml=.html)
+html-local: $(SGML_FILES:.sgml=.html)
 
 .PHONY: html
