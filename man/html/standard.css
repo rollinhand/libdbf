@@ -132,18 +132,19 @@ td.sitelink		{ color:#444444;
 /* Textauszeichnungsebene
  */
 
-h1 		{ color:#000000;
+h1 		{ color:#006600;
 		  font-weight:bold;
 		  font-family:helvetica,arial,sans-serif;
 		}
 
-h2 		{ color:#999999;
+h2 		{ color:#000000;
 		  font-weight:bold;
 		  font-size:1.0em;
-		  border-bottom-color:#999999;
+		  border-bottom-color:#000000;
 		  border-bottom-width:1px;
-		  border-bottom-style:dotted;
+		  border-bottom-style:solid;
 		  padding-bottom:2px;
+		  padding-top:20px;
 		  font-family:helvetica,arial,sans-serif;
 		}
 
@@ -177,6 +178,10 @@ p.center	{ text-align:center; }
 				}
 
 /* Links */
+
+a					{ color:#000000;
+		  		  	  text-decoration:none;
+					}
 
 
 a.internal			{ color:#006600;
