@@ -15,7 +15,10 @@
  *
  * History:
  * $Log$
- * Revision 1.6  2004-08-27 07:02:02  steinm
+ * Revision 1.7  2004-08-30 08:02:19  steinm
+ * - added comment for each function
+ *
+ * Revision 1.6  2004/08/27 07:02:02  steinm
  * - use gettext to output error messages
  *
  * Revision 1.5  2004/08/27 05:27:58  steinm
@@ -39,6 +42,9 @@
 #include "../include/libdbf/libdbf.h"
 #include "dbf.h"
 
+/* get_db_version() {{{
+ * Convert version field of header into human readable string.
+ */
 const char *get_db_version(int version) {
 	static char name[31];
 
@@ -70,9 +76,10 @@ const char *get_db_version(int version) {
 			return name;
 	}
 }
+/* }}} */
 
-/*
- * reads header from file into struct
+/* dbf_ReadHeaderInfo() {{{
+ * Reads header from file into struct
  */
 static int dbf_ReadHeaderInfo(P_DBF *p_dbf)
 {
@@ -92,9 +99,10 @@ static int dbf_ReadHeaderInfo(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
-/*
- * open the the current dbf file and returns file handler
+/* dbf_Open() {{{
+ * Open the a dbf file and returns file handler
  */
 P_DBF *dbf_Open(const char *file)
 {
@@ -127,9 +135,10 @@ P_DBF *dbf_Open(const char *file)
 
 	return p_dbf;
 }
+/* }}} */
 
-/*
- * close the current open dbf file incl. error handling routines
+/* dbf_Close() {{{
+ * Close the current open dbf file and free all memory
  */
 int dbf_Close(P_DBF *p_dbf)
 {
@@ -150,6 +159,7 @@ int dbf_Close(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
 /******************************************************************************
 	Block with functions to get information about the amount of
@@ -157,6 +167,9 @@ int dbf_Close(P_DBF *p_dbf)
 		- columns
  ******************************************************************************/
 
+/* dbf_NumRows() {{{
+ * Returns the number of records.
+ */
 int dbf_NumRows(P_DBF *p_dbf)
 {
 	if ( p_dbf->header->records > 0 ) {
@@ -168,7 +181,11 @@ int dbf_NumRows(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
+/* dbf_NumCols() {{{
+ * Returns the number of fields.
+ */
 int dbf_NumCols(P_DBF *p_dbf)
 {
 	if ( p_dbf->header->header_length > 0) {
@@ -182,11 +199,16 @@ int dbf_NumCols(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
 /******************************************************************************
 	Block with functions to get information about the columns
  ******************************************************************************/
 
+/* dbf_ReadFieldInfo() {{{
+ * Sets p_dbf->fields to an array of DB_FIELD containing the specification
+ * for all columns.
+ */
 int dbf_ReadFieldInfo(P_DBF *p_dbf)
 {
 	int columns, i, offset;
@@ -215,8 +237,12 @@ int dbf_ReadFieldInfo(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
-// maximum 11 characters to return
+/* dbf_ColumnName() {{{
+ * Returns the name of a column. Column names cannot be longer than
+ * 11 characters.
+ */
 const char *dbf_ColumnName(P_DBF *p_dbf, int column)
 {
 	if ( column >= p_dbf->columns ) {
@@ -225,7 +251,10 @@ const char *dbf_ColumnName(P_DBF *p_dbf, int column)
 
 	return p_dbf->fields[column].field_name;
 }
+/* }}} */
 
+/* dbf_ColumnSize() {{{
+ */
 int dbf_ColumnSize(P_DBF *p_dbf, int column)
 {
 	if ( column >= p_dbf->columns ) {
@@ -234,7 +263,10 @@ int dbf_ColumnSize(P_DBF *p_dbf, int column)
 
 	return (int) p_dbf->fields[column].field_length;
 }
+/* }}} */
 
+/* dbf_ColumnType() {{{
+ */
 const char dbf_ColumnType(P_DBF *p_dbf, int column)
 {
 	if ( column >= p_dbf->columns ) {
@@ -243,7 +275,10 @@ const char dbf_ColumnType(P_DBF *p_dbf, int column)
 
 	return p_dbf->fields[column].field_type;
 }
+/* }}} */
 
+/* dbf_ColumnDecimals() {{{
+ */
 int dbf_ColumnDecimals(P_DBF *p_dbf, int column)
 {
 	if ( column >= p_dbf->columns ) {
@@ -252,7 +287,10 @@ int dbf_ColumnDecimals(P_DBF *p_dbf, int column)
 
 	return p_dbf->fields[column].field_decimals;
 }
+/* }}} */
 
+/* dbf_ColumnAddress() {{{
+ */
 u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column)
 {
 	if ( column >= p_dbf->columns ) {
@@ -261,6 +299,7 @@ u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column)
 
 	return p_dbf->fields[column].field_address;
 }
+/* }}} */
 
 /******************************************************************************
 	Block with functions to read out special dBASE information, like
@@ -268,6 +307,9 @@ u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column)
 		- usage of memo
  ******************************************************************************/
 
+/* dbf_GetDate() {{{
+ * Returns the date of last modification as a human readable string.
+ */
 const char *dbf_GetDate(P_DBF *p_dbf)
 {
 	static char date[10];
@@ -284,7 +326,10 @@ const char *dbf_GetDate(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
+/* dbf_HeaderSize() {{{
+ */
 int dbf_HeaderSize(P_DBF *p_dbf)
 {
  	if ( p_dbf->header->header_length > 0 ) {
@@ -296,7 +341,11 @@ int dbf_HeaderSize(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
+/* dbf_RecordLength() {{{
+ * Returns the length of a record.
+ */
 int dbf_RecordLength(P_DBF *p_dbf)
 {
  	if (p_dbf->header->record_length > 0) {
@@ -308,7 +357,11 @@ int dbf_RecordLength(P_DBF *p_dbf)
 
 	return 0;
 }
+/* }}} */
 
+/* dbf_GetStringVersion() {{{
+ * Returns the verion of the dbase file as a human readable string.
+ */
 const char *dbf_GetStringVersion(P_DBF *p_dbf)
 {
 	if ( p_dbf->header->version == 0 ) {
@@ -318,7 +371,11 @@ const char *dbf_GetStringVersion(P_DBF *p_dbf)
 
 	return get_db_version(p_dbf->header->version);
 }
+/* }}} */
 
+/* dbf_GetVersion() {{{
+ * Returns the verion field as it is storedi in the header.
+ */
 int dbf_GetVersion(P_DBF *p_dbf)
 {
 	if ( p_dbf->header->version == 0 ) {
@@ -328,7 +385,10 @@ int dbf_GetVersion(P_DBF *p_dbf)
 
 	return p_dbf->header->version;
 }
+/* }}} */
 
+/* dbf_IsMemo() {{{
+ */
 int dbf_IsMemo(P_DBF *p_dbf)
 {
 	int memo;
@@ -342,11 +402,14 @@ int dbf_IsMemo(P_DBF *p_dbf)
 
 	return memo;
 }
+/* }}} */
 
 /******************************************************************************
 	Block with functions to read records
  ******************************************************************************/
 
+/* dbf_ReadRecord() {{{
+ */
 int dbf_ReadRecord(P_DBF *p_dbf, char *record, int len) {
 	off_t offset;
 
@@ -361,8 +424,20 @@ int dbf_ReadRecord(P_DBF *p_dbf, char *record, int len) {
 	p_dbf->cur_record++;
 	return p_dbf->cur_record;
 }
+/* }}} */
 
+/* dbf_GetRecordData() {{{
+ */
 char *dbf_GetRecordData(P_DBF *p_dbf, char *record, int column) {
 	return(record + p_dbf->fields[column].field_offset);
 }
+/* }}} */
 
+/*
+ * Local variables:
+ * tab-width: 4
+ * c-basic-offset: 4
+ * End:
+ * vim600: sw=4 ts=4 fdm=marker
+ * vim<600: sw=4 ts=4
+ */
