@@ -86,6 +86,14 @@
 */
 typedef struct _P_DBF P_DBF;
 
+/*! \brief Structure to store specification for one field
+
+  A pointer of type DB_FIELD is passed to \ref dbf_Create and
+	\ref dbf_CreateFH.
+*/
+typedef struct _DB_FIELD DB_FIELD;
+#define SIZE_OF_DB_FIELD 32
+
 /*
  *	FUNCTIONS
  */
@@ -114,6 +122,28 @@ int dbf_GetVersion(P_DBF *p_dbf);
 	\return NULL in case of an error.
 */
 P_DBF *dbf_Open (const char *file);
+
+/*! \fn P_DBF *dbf_CreateFH (int fh, DB_FIELD *fields, int numfields)
+	\brief dbf_Create opens a new dBASE \a file and returns the object handle
+	\param fh file handle of already open file
+	\param fields record of field specification
+	\param numfields number of fields
+
+	Creates a dBASE file and returns the object handle.
+	\return NULL in case of an error.
+*/
+P_DBF *dbf_CreateFH (int fh, DB_FIELD *fields, int numfields);
+
+/*! \fn P_DBF *dbf_Create (const char *file, DB_FIELD *fields, int numfields)
+	\brief dbf_Create opens a new dBASE \a file and returns the object handle
+	\param file the filename of the dBASE file
+	\param fields record of field specification
+	\param numfields number of fields
+
+	Creates a dBASE file and returns the object handle.
+	\return NULL in case of an error.
+*/
+P_DBF *dbf_Create (const char *file, DB_FIELD *fields, int numfields);
 
 /*! \fn int dbf_Close (P_DBF *p_dbf)
 	\brief dbf_Close closes a dBASE file.
@@ -217,6 +247,20 @@ u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column);
 */
 const char *dbf_GetDate(P_DBF *p_dbf);
 
+/*! \fn int dbf_SetField(DB_FIELD *field, int type, const char *name, int len, int dec)
+	\brief dbf_SetField fills a field structure
+	\param *field pointer to field which shall be set
+	\param type type of field
+	\param name name of field
+	\param len length of field
+	\param dec number of decimals
+
+	Sets the field structure with the given values.
+
+	\return 0 
+*/
+int dbf_SetField(DB_FIELD *field, int type, const char *name, int len, int dec);
+
 /*! \fn int dbf_RecordLength(P_DBF *p_dbf)
 	\brief dbf_RecordLength returns length of a dataset
 	\param *p_dbf the object handle of the opened file
@@ -237,6 +281,51 @@ int dbf_RecordLength(P_DBF *p_dbf);
 	\return header length or -1 on error
 */
 int dbf_HeaderSize(P_DBF *p_dbf);
+
+/*! \fn int dbf_SetRecordOffset(P_DBF *p_dbf, int offset)
+	\brief dbf_SetRecordOffset set the internal record counter
+	\param *p_dbf the object handle of the opened file
+	\param offset the new record number of the next record read
+
+	Sets the internal record counter. The counter is an index counting
+	through the records within a dBASE file. The first record has
+	number 1. A negative offset will be counted from the end of the file.
+	The last record has index -1.
+	\ref dbf_ReadRecord uses the counter when reading the
+	next record. Setting a value outside the range -numrecord to numrecords
+	or 0 will cause an error.
+
+	\return the new internal record counter or -1 in case of an error
+*/
+int dbf_SetRecordOffset(P_DBF *p_dbf, int offset);
+
+/*! \fn int dbf_ReadRecord(P_DBF *p_dbf, char *record, int len)
+	\brief dbf_ReadRecord reads the current record
+	\param *p_dbf the object handle of the opened file
+	\param *record a memory block large enough to contain a record
+	\param len the length of the record block
+
+	Returns a record as it stored in the dBASE file. The memory must
+	be large enough and allocated by the calling application.
+
+	\return 0 if successful, -1 on error
+*/
+int dbf_ReadRecord(P_DBF *p_dbf, char *record, int len);
+
+/*! \fn int dbf_WriteRecord(P_DBF *p_dbf, char *record, int len)
+	\brief dbf_WriteRecord writes a record
+	\param *p_dbf the object handle of the opened file
+	\param *record record data suitable for writing into the dBASE file
+	\param len the length of the record block
+
+	Writes a record into a dBASE file and returns the number of
+	records. The record data must contain all field data but not
+	the leading byte which indicates whether the record is deleted.
+	Hence, len must be \ref dbf_RecordLength() - 1.
+
+	\return number of records written, -1 on error
+*/
+int dbf_WriteRecord(P_DBF *p_dbf, char *record, int len);
 
 /*! \fn int dbf_IsMemo(P_DBF *p_dbf)
 	\brief dbf_IsMemo tells if dbf provides also a memo file

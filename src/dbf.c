@@ -1,11 +1,11 @@
-/******************************************************************************
+/*****************************************************************************
  * dbf.c
- ******************************************************************************
+ *****************************************************************************
  * Library to read information from dBASE files
  * Author: Bjoern Berg, clergyman@gmx.de
  * (C) Copyright 2004, Björn Berg
  *
- ******************************************************************************
+ *****************************************************************************
  * Permission to use, copy, modify and distribute this software and its
  * documentation for any purpose is hereby granted without fee, provided that
  * the above copyright notice appear in all copies and that both that copyright
@@ -13,32 +13,11 @@
  * author makes no representations about the suitability of this software for
  * any purpose. It is provided "as is" without express or implied warranty.
  *
- * History:
- * $Log$
- * Revision 1.7  2004-08-30 08:02:19  steinm
- * - added comment for each function
- *
- * Revision 1.6  2004/08/27 07:02:02  steinm
- * - use gettext to output error messages
- *
- * Revision 1.5  2004/08/27 05:27:58  steinm
- * - various modification to api
- * - added functions to get record
- * - store header and fields of file in P_DBF for faster access
- *
- * Revision 1.4  2004/06/18 14:45:54  steinm
- * - complete switch to autotools
- *
- * Revision 1.2  2004/05/18 15:27:33  rollinhand
- * splitted header file to libdbf und dbf. libdbf is official
- *
- * Revision 1.1  2004/05/14 20:37:17  rollinhand
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2004/05/14 20:30:36  rollinhand
- *****************************************************************************/
+ * $Id$
+ ****************************************************************************/
 
 
+#include <time.h>
 #include "../include/libdbf/libdbf.h"
 #include "dbf.h"
 
@@ -78,7 +57,7 @@ const char *get_db_version(int version) {
 }
 /* }}} */
 
-/* dbf_ReadHeaderInfo() {{{
+/* static dbf_ReadHeaderInfo() {{{
  * Reads header from file into struct
  */
 static int dbf_ReadHeaderInfo(P_DBF *p_dbf)
@@ -96,6 +75,98 @@ static int dbf_ReadHeaderInfo(P_DBF *p_dbf)
 	header->record_length = rotate2b(header->record_length);
 	header->records = rotate4b(header->records);
 	p_dbf->header = header;
+
+	return 0;
+}
+/* }}} */
+
+/* static dbf_WriteHeaderInfo() {{{
+ * Write header into file
+ */
+static int dbf_WriteHeaderInfo(P_DBF *p_dbf, DB_HEADER *header)
+{
+	time_t ps_calendar_time;
+	struct tm *ps_local_tm;
+
+	DB_HEADER *newheader = malloc(sizeof(DB_HEADER));
+	if(NULL == newheader) {
+		return -1;
+	}
+	memcpy(newheader, header, sizeof(DB_HEADER));
+
+	ps_calendar_time = time(NULL);
+	if(ps_calendar_time != (time_t)(-1)) {
+		ps_local_tm = localtime(&ps_calendar_time);
+		newheader->last_update[0] = ps_local_tm->tm_year;
+		newheader->last_update[1] = ps_local_tm->tm_mon+1;
+		newheader->last_update[2] = ps_local_tm->tm_mday;
+	}
+
+	newheader->header_length = rotate2b(newheader->header_length);
+	newheader->record_length = rotate2b(newheader->record_length);
+	newheader->records = rotate4b(newheader->records);
+
+	/* Make sure the header is written at the beginning of the file
+	 * because this function is also called after each record has
+	 * been written.
+	 */
+	lseek(p_dbf->dbf_fh, 0, SEEK_SET);
+	if ((write( p_dbf->dbf_fh, newheader, sizeof(DB_HEADER))) == -1 ) {
+		free(newheader);
+		return -1;
+	}
+	free(newheader);
+	return 0;
+}
+/* }}} */
+
+/* static dbf_ReadFieldInfo() {{{
+ * Sets p_dbf->fields to an array of DB_FIELD containing the specification
+ * for all columns.
+ */
+static int dbf_ReadFieldInfo(P_DBF *p_dbf)
+{
+	int columns, i, offset;
+	DB_FIELD *fields;
+
+	columns = dbf_NumCols(p_dbf);
+
+	if(NULL == (fields = malloc(columns * sizeof(DB_FIELD)))) {
+		return -1;
+	}
+
+	lseek(p_dbf->dbf_fh, sizeof(DB_HEADER), SEEK_SET);
+
+	if ((read( p_dbf->dbf_fh, fields, columns * sizeof(DB_FIELD))) == -1 ) {
+		perror(_("In function dbf_ReadFieldInfo(): "));
+		return -1;
+	}
+	p_dbf->fields = fields;
+	p_dbf->columns = columns;
+	/* The first byte of a record indicates whether it is deleted or not. */
+	offset = 1;
+	for(i = 0; i < columns; i++) {
+		fields[i].field_offset = offset;
+		offset += fields[i].field_length;
+	}
+
+	return 0;
+}
+/* }}} */
+
+/* static dbf_WriteFieldInfo() {{{
+ * Writes the field specification into the output file
+ */
+static int dbf_WriteFieldInfo(P_DBF *p_dbf, DB_FIELD *fields, int numfields)
+{
+	lseek(p_dbf->dbf_fh, sizeof(DB_HEADER), SEEK_SET);
+
+	if ((write( p_dbf->dbf_fh, fields, numfields * sizeof(DB_FIELD))) == -1 ) {
+		perror(_("In function dbf_WriteFieldInfo(): "));
+		return -1;
+	}
+
+	write(p_dbf->dbf_fh, "\r\0", 2);
 
 	return 0;
 }
@@ -131,9 +202,72 @@ P_DBF *dbf_Open(const char *file)
 		return NULL;
 	}
 
-	p_dbf->cur_record = -1;
+	p_dbf->cur_record = 0;
 
 	return p_dbf;
+}
+/* }}} */
+
+/* dbf_CreateFH() {{{
+ * Create a new dbf file and returns file handler
+ */
+P_DBF *dbf_CreateFH(int fh, DB_FIELD *fields, int numfields)
+{
+	P_DBF *p_dbf;
+	DB_HEADER *header;
+	int reclen, i;
+
+	if(NULL == (p_dbf = malloc(sizeof(P_DBF)))) {
+		return NULL;
+	}
+
+	p_dbf->dbf_fh = fh;
+
+	if(NULL == (header = malloc(sizeof(DB_HEADER)))) {
+		return NULL;
+	}
+	reclen = 0;
+	for(i=0; i<numfields; i++) {
+		reclen += fields[i].field_length;
+	}
+	memset(header, 0, sizeof(DB_HEADER));
+	header->version = FoxBasePlus;
+	/* Add 1 to record length for deletion flog */
+	header->record_length = reclen+1;
+	header->header_length = sizeof(DB_HEADER) + numfields * sizeof(DB_FIELD) + 2;
+	if(0 > dbf_WriteHeaderInfo(p_dbf, header)) {
+		free(p_dbf);
+		return NULL;
+	}
+	p_dbf->header = header;
+
+	if(0 > dbf_WriteFieldInfo(p_dbf, fields, numfields)) {
+		free(p_dbf->header);
+		free(p_dbf);
+		return NULL;
+	}
+	p_dbf->fields = fields;
+
+	p_dbf->cur_record = 0;
+
+	return p_dbf;
+}
+/* }}} */
+
+/* dbf_Create() {{{
+ * Create a new dbf file and returns file handler
+ */
+P_DBF *dbf_Create(const char *file, DB_FIELD *fields, int numfields)
+{
+	int fh;
+
+	if (file[0] == '-' && file[1] == '\0') {
+		fh = fileno(stdout);
+	} else if ((fh = open(file, O_WRONLY|O_BINARY)) == -1) {
+		return NULL;
+	}
+
+	return(dbf_CreateFH(fh, fields, numfields));
 }
 /* }}} */
 
@@ -202,42 +336,8 @@ int dbf_NumCols(P_DBF *p_dbf)
 /* }}} */
 
 /******************************************************************************
-	Block with functions to get information about the columns
+	Block with functions to get/set information about the columns
  ******************************************************************************/
-
-/* dbf_ReadFieldInfo() {{{
- * Sets p_dbf->fields to an array of DB_FIELD containing the specification
- * for all columns.
- */
-int dbf_ReadFieldInfo(P_DBF *p_dbf)
-{
-	int columns, i, offset;
-	DB_FIELD *fields;
-
-	columns = dbf_NumCols(p_dbf);
-
-	if(NULL == (fields = malloc(columns * sizeof(DB_FIELD)))) {
-		return -1;
-	}
-
-	lseek(p_dbf->dbf_fh, sizeof(DB_HEADER), SEEK_SET);
-
-	if ((read( p_dbf->dbf_fh, fields, columns * sizeof(DB_FIELD))) == -1 ) {
-		perror(_("In function dbf_ReadFieldInfo(): "));
-		return -1;
-	}
-	p_dbf->fields = fields;
-	p_dbf->columns = columns;
-	/* The first byte of a record indicates whether it is deleted or not. */
-	offset = 1;
-	for(i = 0; i < columns; i++) {
-		fields[i].field_offset = offset;
-		offset += fields[i].field_length;
-	}
-
-	return 0;
-}
-/* }}} */
 
 /* dbf_ColumnName() {{{
  * Returns the name of a column. Column names cannot be longer than
@@ -301,6 +401,19 @@ u_int32_t dbf_ColumnAddress(P_DBF *p_dbf, int column)
 }
 /* }}} */
 
+/* dbf_SetField() {{{
+ */
+int dbf_SetField(DB_FIELD *field, int type, const char *name, int len, int dec)
+{
+	memset(field, 0, sizeof(DB_FIELD));
+	field->field_type = type;
+	strncpy(field->field_name, name, 11);
+	field->field_length = len;
+	field->field_decimals = dec;
+	return 0;
+}
+/* }}} */
+
 /******************************************************************************
 	Block with functions to read out special dBASE information, like
 		- date
@@ -321,7 +434,7 @@ const char *dbf_GetDate(P_DBF *p_dbf)
 		return date;
 	} else {
 		perror("In function GetDate(): ");
-		return (char *)-1;
+		return "";
 	}
 
 	return 0;
@@ -408,21 +521,62 @@ int dbf_IsMemo(P_DBF *p_dbf)
 	Block with functions to read records
  ******************************************************************************/
 
+/* dbf_SetRecordOffset() {{{
+ */
+int dbf_SetRecordOffset(P_DBF *p_dbf, int offset) {
+	if(offset == 0)
+		return -3;
+	if(offset > (int) p_dbf->header->records)
+		return -1;
+	if((offset < 0) && (abs(offset) > p_dbf->header->records))
+		return -2;
+	if(offset < 0)
+		p_dbf->cur_record = (int) p_dbf->header->records + offset;
+	else
+		p_dbf->cur_record = offset-1;
+	return p_dbf->cur_record;
+}
+/* }}} */
+
 /* dbf_ReadRecord() {{{
  */
 int dbf_ReadRecord(P_DBF *p_dbf, char *record, int len) {
 	off_t offset;
 
-	if((p_dbf->cur_record+1) >= p_dbf->header->records)
+	if(p_dbf->cur_record >= p_dbf->header->records)
 		return -1;
 
-	offset = lseek(p_dbf->dbf_fh, p_dbf->header->header_length + (p_dbf->cur_record+1) * (p_dbf->header->record_length), SEEK_SET);
+	offset = lseek(p_dbf->dbf_fh, p_dbf->header->header_length + p_dbf->cur_record * (p_dbf->header->record_length), SEEK_SET);
 //	fprintf(stdout, "Offset = %d, Record length = %d\n", offset, p_dbf->header->record_length);
 	if (read( p_dbf->dbf_fh, record, p_dbf->header->record_length) == -1 ) {
 		return -1;
 	}
 	p_dbf->cur_record++;
-	return p_dbf->cur_record;
+	return p_dbf->cur_record-1;
+}
+/* }}} */
+
+/* dbf_WriteRecord() {{{
+ */
+int dbf_WriteRecord(P_DBF *p_dbf, char *record, int len) {
+
+	if(len != p_dbf->header->record_length-1) {
+		fprintf(stderr, _("Length of record mismatches expected length (%d != %d)."), len, p_dbf->header->record_length);
+		fprintf(stderr, "\n");
+		return -1;
+	}
+	lseek(p_dbf->dbf_fh, 0, SEEK_END);
+	if (write( p_dbf->dbf_fh, " ", 1) == -1 ) {
+		return -1;
+	}
+	if (write( p_dbf->dbf_fh, record, p_dbf->header->record_length-1) == -1 ) {
+		return -1;
+	}
+	p_dbf->header->records++;
+	if(0 > dbf_WriteHeaderInfo(p_dbf, p_dbf->header)) {
+		return -1;
+	}
+	return p_dbf->header->records;
 }
 /* }}} */
 
