@@ -2,4 +2,6 @@ libdbf
 =====
 C-library for reading dbase files.
 
-
+Check out
+http://community.borland.com/article/0,1410,15838,00.html
+for a description of the dBASE format
