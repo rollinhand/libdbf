@@ -7,14 +7,15 @@
 set -e
 
 # Check if needed software is available on system
+echo -n "Check Build Environment..."
 for tool in aclocal autoheader automake libtoolize intltoolize autoconf; do
-	if [ ! `whereis ${tool} | awk '{print $2}'` ] ; then
+	test ! `whereis ${tool} | awk '{print $2}'` && {
+		echo " not OK"
 		echo "${tool} not found - please install first!"
 		exit
-	else 
-		echo "${tool} found - OK!"		
-	fi	
+	}		
 done
+echo " OK"
 
 # Refresh GNU autotools toolchain.
 # Test if /usr/share/automake exists, else prove for automake-$version
