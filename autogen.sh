@@ -22,14 +22,16 @@ echo " OK"
 # This test-case is e.g. needed for SuSE distributions
 automk="automake"
 test ! -d /usr/share/automake && {
-	version=`automake --version | head -n 1 | awk '{print $4}' | awk -F. '{print $1$2}'`
+	version=`automake --version | head -n 1 | awk '{print $4}' | awk -F. '{print $1"."$2}'`
 	automk="automake-${version}"
 }
+
+echo ${automk}
  	
 for i in config.guess config.sub missing install-sh mkinstalldirs ; do
 	test -r /usr/share/${automk}/${i} && {
 		rm -f ${i}
-		cp /usr/share/automake/${i} .
+		cp /usr/share/${automk}/${i} .
 	}
 	chmod 755 ${i}
 done
