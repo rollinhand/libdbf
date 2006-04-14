@@ -1,5 +1,5 @@
 /****************************************************************************
- * liblibdbf.h
+ * libdbf.h
  ****************************************************************************
  * Library to read information from dBASE files
  * Author: Bjoern Berg, clergyman@gmx.de
@@ -19,7 +19,7 @@
 
 #include <sys/types.h>
 
-/*! \file liblibdbf.h
+/*! \file libdbf.h
 	\brief provides access to libdbf.
 
 	If you want to use functions of libdbf in your own programme, you have to add
@@ -32,7 +32,7 @@
 	format you want to. libdbf provides generic interfaces to access information
 	in a dBASE file very easily without knowing much about the structure of the
 	file.</p>
-	<p>The commands and functions of libdbf orintate much on PHP's functions to access
+	<p>The commands and functions of libdbf orientate much on PHP's functions to access
 	MySQL or Oracle databases. So, first steps should be very easy.</p>
 
 	\section data Data Structures
@@ -336,3 +336,4 @@ int dbf_WriteRecord(P_DBF *p_dbf, char *record, int len);
 	\return 0 no memo, 1 memo, -1 on error
 */
 int dbf_IsMemo(P_DBF *p_dbf);
+
