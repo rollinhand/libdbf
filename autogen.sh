@@ -5,17 +5,29 @@
 #
 # Requires: automake, autoconf, dpkg-dev
 set -e
+test ! ${OSTYPE} && {
+	OSTYPE="other"
+}
 
 # Check if needed software is available on system
-echo -n "Check Build Environment..."
-for tool in aclocal autoreconf autoheader automake libtoolize intltoolize autoconf; do
-	test ! `whereis ${tool} | awk '{print $2}'` && {
-		echo " not OK"
-		echo "${tool} not found - please install first!"
-		exit
-	}		
-done
-echo " OK"
+# MSYS is used on Windows
+test "${OSTYPE}" = "msys" && {
+	echo "Detected Operating System: ${OSTYPE}"
+}
+
+# Unix-based operating systems
+test ${OSTYPE} != "msys" && {
+	echo "Detected Operating System: ${OSTYPE}"
+	echo -n "Check Build Environment..."
+	for tool in aclocal autoreconf autoheader automake libtoolize intltoolize autoconf; do
+		test ! `whereis ${tool} | awk '{print $2}'` && {
+			echo " not OK"
+			echo "${tool} not found - please install first!"
+			exit
+		}		
+	done
+	echo " OK"
+}
 
 # Refresh GNU autotools toolchain.
 # Test if /usr/share/automake exists, else prove for automake-$version
@@ -37,17 +49,19 @@ echo " OK"
 aclocal
 autoheader
 automake --verbose --copy --add-missing 
-glib-gettextize --force --copy
+# -- BERG: Currently not possible with MinGW and MSYS on Windows
+#glib-gettextize --force --copy
 #autoreconf -i -f -v --warnings=all
 libtoolize --copy --force
-intltoolize --copy --force
+# -- BERG: Currently not possible with MinGW and MSYS on Windows
+#intltoolize --copy --force
 autoconf
 
 
 # For the Debian build
-test -d debian && {
+test -d debian -a "${OSTYPE}" != "msys" && {
 	# Kill executable list first
-	rm -f debian/executable.files
+	`rm -f debian/executable.files`
 
 	# Make sure our executable and removable lists won't be screwed up
 	debclean && echo Cleaned buildtree just in case...
@@ -56,8 +70,8 @@ test -d debian && {
 	# upstream tarball does not include the file or if it is mispackaged
 	# for whatever reason.
 	echo Generating list of executable files...
-	rm -f debian/executable.files
-	find -type f -perm +111 ! -name '.*' -fprint debian/executable.files
+	`rm -f debian/executable.files`
+	`find -type f -perm +111 ! -name '.*' -fprint debian/executable.files`
 
 	# link these in Debian builds
 #	rm -f config.sub config.guess
