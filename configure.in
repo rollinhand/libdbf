@@ -5,8 +5,7 @@ AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
 AM_MAINTAINER_MODE
 AM_CONFIG_HEADER(config.h)
-dnl -- BERG: AC_PROG_INTLTOOL does not work with MinGW on Windows
-dnl AC_PROG_INTLTOOL
+AC_PROG_INTLTOOL
 
 AC_CANONICAL_HOST
 
@@ -32,15 +31,14 @@ AC_PATH_PROG(RM, rm, /bin/rm)
 AC_PATH_PROG(MV, mv, /bin/mv)
 AC_PATH_PROG(TAR, tar, /bin/tar)
 
-dnl -- BERG: GETTEXT does not work with MinGW on Windows
 dnl Add the languages which your application supports here.
-dnl ALL_LINGUAS="de"
-dnl AC_SUBST(ALL_LINGUAS, "de")
-dnl AM_GNU_GETTEXT_VERSION(0.14.1)
-dnl GETTEXT_PACKAGE=libdbf
-dnl AC_SUBST(GETTEXT_PACKAGE, libdbf)
-dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", GETTEXT_PACKAGE)
-dnl AM_GLIB_GNU_GETTEXT
+ALL_LINGUAS="de"
+AC_SUBST(ALL_LINGUAS, "de")
+AM_GNU_GETTEXT_VERSION(0.14.1)
+GETTEXT_PACKAGE=libdbf
+AC_SUBST(GETTEXT_PACKAGE, libdbf)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", GETTEXT_PACKAGE)
+AM_GLIB_GNU_GETTEXT
 
 AC_PROG_LIBTOOL
 
@@ -77,9 +75,9 @@ dnl   [M_LIBS="-lm"; AC_DEFINE(HAVE_ISINF)]))
 AC_CHECK_PROG(DOC_TO_MAN, docbook-to-man, docbook-to-man)
 if test ! "$DOC_TO_MAN" ; then
   DOCDIR=""
-	AC_MSG_RESULT([docbook-to-man could not be found. I will not build man pages!]) 
+  AC_MSG_RESULT([docbook-to-man could not be found. I will not build man pages!]) 
 else
-	DOCDIR=doc
+  DOCDIR=doc
 fi
 
 dnl
